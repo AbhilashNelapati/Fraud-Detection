@@ -14,7 +14,7 @@ A balanced, realistic, and job-ready system that:
 
 ## 📁 Structure
 
-- `data/` : Raw and processed datasets
+- `data/` : Raw datasets (Not uploaded to GitHub due to size limits. [Download from Kaggle](https://www.kaggle.com/))
 - `notebooks/` : EDA notebooks (Data Analysis focus)
 - `dashboard/` : Dashboard insights and charts
 - `models/` : Saved ML models
@@ -25,7 +25,10 @@ A balanced, realistic, and job-ready system that:
 
 ## 🚀 How to Run
 
-1. **Perform EDA**:
+1. **Download the Dataset**:
+   Download the fraud dataset from Kaggle and place `fraudTrain.csv` and `fraudTest.csv` into the `data/` folder.
+
+2. **Perform EDA**:
    Run the `src/eda_analysis.py` or the `notebooks/eda.ipynb` to generate charts and insights.
    
 2. **Train Models**:
