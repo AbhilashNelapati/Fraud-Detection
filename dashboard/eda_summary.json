@@ -1,0 +1,40 @@
+{
+  "total_transactions": 200000,
+  "fraud_transactions": 1645,
+  "legit_transactions": 198355,
+  "fraud_percentage": 0.82,
+  "avg_fraud_amount": 509.35,
+  "avg_legit_amount": 67.54,
+  "peak_fraud_hour": 23,
+  "top_risky_categories": {
+    "shopping_net": 2.32,
+    "grocery_pos": 2.04,
+    "misc_net": 1.93,
+    "shopping_pos": 0.97,
+    "gas_transport": 0.74
+  },
+  "top_risky_states": {
+    "IA": 1.0648596321393997,
+    "ND": 1.0940919037199124,
+    "WY": 1.098901098901099,
+    "NE": 1.2523314681588062,
+    "MN": 1.3090611577009614,
+    "ME": 1.3503086419753085,
+    "NY": 1.427568453077463,
+    "DC": 1.6181229773462782,
+    "TN": 2.250092216894135,
+    "AK": 7.871720116618077
+  },
+  "chart_paths": {
+    "fraud_ratio": "C:\\Users\\nelap\\OneDrive\\Desktop\\Data Project\\fraud-analytics-ai\\dashboard\\eda_charts\\01_fraud_ratio.png",
+    "amount_dist": "C:\\Users\\nelap\\OneDrive\\Desktop\\Data Project\\fraud-analytics-ai\\dashboard\\eda_charts\\02_amount_distribution.png",
+    "hourly_fraud": "C:\\Users\\nelap\\OneDrive\\Desktop\\Data Project\\fraud-analytics-ai\\dashboard\\eda_charts\\03_hourly_fraud_rate.png",
+    "category_risk": "C:\\Users\\nelap\\OneDrive\\Desktop\\Data Project\\fraud-analytics-ai\\dashboard\\eda_charts\\04_category_fraud_rate.png",
+    "monthly_trend": "C:\\Users\\nelap\\OneDrive\\Desktop\\Data Project\\fraud-analytics-ai\\dashboard\\eda_charts\\05_monthly_trend.png",
+    "gender_fraud": "C:\\Users\\nelap\\OneDrive\\Desktop\\Data Project\\fraud-analytics-ai\\dashboard\\eda_charts\\06_gender_fraud.png",
+    "state_risk": "C:\\Users\\nelap\\OneDrive\\Desktop\\Data Project\\fraud-analytics-ai\\dashboard\\eda_charts\\07_top_states_fraud.png",
+    "age_dist": "C:\\Users\\nelap\\OneDrive\\Desktop\\Data Project\\fraud-analytics-ai\\dashboard\\eda_charts\\08_age_distribution.png",
+    "correlation": "C:\\Users\\nelap\\OneDrive\\Desktop\\Data Project\\fraud-analytics-ai\\dashboard\\eda_charts\\09_correlation_heatmap.png",
+    "amount_box": "C:\\Users\\nelap\\OneDrive\\Desktop\\Data Project\\fraud-analytics-ai\\dashboard\\eda_charts\\10_amount_boxplot.png"
+  }
+}
