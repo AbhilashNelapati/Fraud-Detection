@@ -6,165 +6,238 @@
     <title>Fraud Detection & Risk Analytics Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
-        .glass-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background-color: #030712; 
+            color: #f3f4f6; 
+            overflow-x: hidden;
         }
+
+        /* Ambient glowing background blobs */
+        .blob-1 { position: fixed; top: -100px; left: -200px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%); z-index: -1; pointer-events: none; }
+        .blob-2 { position: fixed; bottom: -200px; right: -100px; width: 800px; height: 800px; background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%); z-index: -1; pointer-events: none; }
+        .blob-3 { position: fixed; top: 40%; left: 30%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(16,185,129,0.05) 0%, transparent 70%); z-index: -1; pointer-events: none; }
+
+        /* Premium Glassmorphism */
+        .glass-card {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Image styling */
         .img-container img {
             width: 100%;
             height: auto;
             border-radius: 8px;
+            opacity: 0.95;
+            transition: opacity 0.3s ease;
         }
-        .highlight-red { color: #ef4444; }
-        .highlight-green { color: #22c55e; }
-        .highlight-blue { color: #38bdf8; }
+        .glass-card:hover .img-container img { opacity: 1; }
+
+        /* Highlights */
+        .text-gradient { background-clip: text; -webkit-background-clip: text; color: transparent; }
+        .grad-blue { background-image: linear-gradient(to right, #38bdf8, #818cf8); }
+        .grad-red { background-image: linear-gradient(to right, #ef4444, #f97316); }
+        .grad-green { background-image: linear-gradient(to right, #10b981, #34d399); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
-<body class="p-6">
+<body class="p-4 sm:p-6 lg:p-8">
 
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
-        <div>
-            <h1 class="text-3xl font-bold highlight-blue"><i class="fas fa-shield-alt mr-2"></i>Fraud Detection & Risk Analytics</h1>
-            <p class="text-slate-400 mt-1">Real-time monitoring and historical analysis of transaction fraud</p>
-        </div>
-        <div class="flex items-center gap-4">
-            <a href="/" class="text-blue-400 hover:text-blue-300 transition underline"><i class="fas fa-arrow-left mr-1"></i> Back to Simulator</a>
-            <div class="glass-card px-4 py-2 flex items-center gap-3">
-                <div class="h-3 w-3 rounded-full bg-red-500 animate-pulse"></div>
-                <span class="font-semibold text-sm">System Active</span>
-            </div>
-        </div>
-    </div>
+    <div class="blob-1"></div>
+    <div class="blob-2"></div>
+    <div class="blob-3"></div>
 
-    <!-- 1. TOP KPI SECTION -->
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-        <div class="glass-card p-4">
-            <h3 class="text-slate-400 text-sm font-semibold mb-1">Total Transactions</h3>
-            <p class="text-2xl font-bold">200,000</p>
-        </div>
-        <div class="glass-card p-4 border-l-4 border-red-500">
-            <h3 class="text-slate-400 text-sm font-semibold mb-1">Total Fraud Cases</h3>
-            <p class="text-2xl font-bold highlight-red">1,640</p>
-        </div>
-        <div class="glass-card p-4 border-l-4 border-red-500">
-            <h3 class="text-slate-400 text-sm font-semibold mb-1">Fraud Percentage</h3>
-            <p class="text-2xl font-bold highlight-red">0.82%</p>
-        </div>
-        <div class="glass-card p-4">
-            <h3 class="text-slate-400 text-sm font-semibold mb-1">Avg Fraud Amount</h3>
-            <p class="text-2xl font-bold text-orange-400">$509.35</p>
-        </div>
-        <div class="glass-card p-4">
-            <h3 class="text-slate-400 text-sm font-semibold mb-1">Avg Legit Amount</h3>
-            <p class="text-2xl font-bold highlight-green">$67.54</p>
-        </div>
-    </div>
-
-    <!-- MAIN DASHBOARD GRID -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <div class="max-w-7xl mx-auto space-y-8 relative z-10">
         
-        <!-- Left Column: Key Visuals -->
-        <div class="lg:col-span-2 space-y-6">
-            
-            <div class="grid grid-cols-2 gap-6">
-                <!-- 2. Fraud Distribution -->
-                <div class="glass-card p-4 img-container">
-                    <h3 class="text-lg font-semibold mb-3 border-b border-slate-700 pb-2">Fraud vs Legit Distribution</h3>
-                    <img src="/dashboard_data/eda_charts/01_fraud_ratio.png" alt="Fraud Ratio">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+            <div>
+                <h1 class="text-4xl font-bold mb-2 text-gradient grad-blue">
+                    <i class="fas fa-chart-pie mr-2"></i>Analytics Command Center
+                </h1>
+                <p class="text-slate-400 font-light text-lg">Real-time enterprise fraud metrics & insights</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="/" class="glass-card px-5 py-2 text-sky-400 hover:text-white transition flex items-center gap-2 font-medium">
+                    <i class="fas fa-arrow-left"></i> Back to AI Engine
+                </a>
+                <div class="glass-card px-5 py-2 flex items-center gap-3">
+                    <div class="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]"></div>
+                    <span class="font-semibold text-sm tracking-wider uppercase text-slate-300">Live Telemetry</span>
                 </div>
-                
-                <!-- 6. Category Analysis -->
-                <div class="glass-card p-4 img-container">
-                    <h3 class="text-lg font-semibold mb-3 border-b border-slate-700 pb-2">Risk by Merchant Category</h3>
-                    <img src="/dashboard_data/eda_charts/04_category_fraud_rate.png" alt="Category Risk">
-                </div>
             </div>
-
-            <!-- 3. Amount Analysis -->
-            <div class="glass-card p-4 img-container">
-                <h3 class="text-lg font-semibold mb-3 border-b border-slate-700 pb-2">Transaction Amount Analysis (Fraud vs Legit)</h3>
-                <img src="/dashboard_data/eda_charts/02_amount_distribution.png" alt="Amount Distribution">
-            </div>
-
-            <!-- 4. Time-based Analysis -->
-            <div class="glass-card p-4 img-container">
-                <h3 class="text-lg font-semibold mb-3 border-b border-slate-700 pb-2">Hourly Fraud Trend (Night Risk)</h3>
-                <img src="/dashboard_data/eda_charts/03_hourly_fraud_rate.png" alt="Hourly Trend">
-            </div>
-
-            <!-- 5. Location-based Fraud -->
-            <div class="glass-card p-4 img-container">
-                <h3 class="text-lg font-semibold mb-3 border-b border-slate-700 pb-2">Top 10 Risky States</h3>
-                <img src="/dashboard_data/eda_charts/07_top_states_fraud.png" alt="Top States">
-            </div>
-
         </div>
 
-        <!-- Right Column: Insights & Alerts -->
-        <div class="space-y-6">
-            
-            <!-- INSIGHTS PANEL (Data Analyst thinking) -->
-            <div class="glass-card p-5 bg-gradient-to-br from-slate-800 to-slate-900 border-l-4 border-blue-500">
-                <h3 class="text-lg font-bold mb-4 text-white"><i class="fas fa-lightbulb text-yellow-400 mr-2"></i>Key Analyst Insights</h3>
-                <ul class="space-y-4 text-sm">
-                    <li class="flex items-start">
-                        <i class="fas fa-arrow-right text-blue-400 mt-1 mr-2"></i>
-                        <span><strong>High-Value Anomaly:</strong> Average fraud transaction is <strong>$509</strong>, compared to $67 for legit. High amounts are the primary risk indicator.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-arrow-right text-blue-400 mt-1 mr-2"></i>
-                        <span><strong>Night-Time Spikes:</strong> Fraud rate significantly peaks around <strong>23:00 (11 PM)</strong>.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-arrow-right text-blue-400 mt-1 mr-2"></i>
-                        <span><strong>Targeted Categories:</strong> <strong>Shopping_net</strong> and <strong>grocery_pos</strong> are the most exploited merchant categories.</span>
-                    </li>
-                </ul>
+        <!-- 1. TOP KPI SECTION -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 lg:gap-6 mb-8">
+            <div class="glass-card p-5 border-t-2 border-t-slate-500">
+                <h3 class="text-slate-400 text-xs font-bold tracking-widest uppercase mb-2">Total Scans</h3>
+                <p class="text-3xl font-bold text-white">200,000</p>
             </div>
+            <div class="glass-card p-5 border-t-2 border-t-red-500 bg-red-900/5">
+                <h3 class="text-slate-400 text-xs font-bold tracking-widest uppercase mb-2">Threats Caught</h3>
+                <p class="text-3xl font-bold text-gradient grad-red">1,640</p>
+            </div>
+            <div class="glass-card p-5 border-t-2 border-t-orange-500 bg-orange-900/5">
+                <h3 class="text-slate-400 text-xs font-bold tracking-widest uppercase mb-2">Threat Ratio</h3>
+                <p class="text-3xl font-bold text-orange-400">0.82%</p>
+            </div>
+            <div class="glass-card p-5 border-t-2 border-t-indigo-400">
+                <h3 class="text-slate-400 text-xs font-bold tracking-widest uppercase mb-2">Avg Fraud Amt</h3>
+                <p class="text-3xl font-bold text-indigo-400">$509.35</p>
+            </div>
+            <div class="glass-card p-5 border-t-2 border-t-emerald-500">
+                <h3 class="text-slate-400 text-xs font-bold tracking-widest uppercase mb-2">Avg Safe Amt</h3>
+                <p class="text-3xl font-bold text-gradient grad-green">$67.54</p>
+            </div>
+        </div>
 
-            <!-- BONUS: FRAUD ALERT PANEL -->
-            <div class="glass-card p-5 border-l-4 border-red-500 bg-red-900/20">
-                <h3 class="text-lg font-bold mb-4 text-white"><i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Live Fraud Alerts</h3>
+        <!-- MAIN DASHBOARD GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+            
+            <!-- Left Column: Core Visuals -->
+            <div class="lg:col-span-2 space-y-6 lg:space-y-8">
                 
-                <div class="space-y-3">
-                    <div class="bg-slate-800 p-3 rounded border border-red-500/50">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-xs font-bold text-red-400">RISK: 92/100</span>
-                            <span class="text-xs text-slate-400">Just now</span>
-                        </div>
-                        <p class="text-sm font-semibold">Txn: $845.00 (shopping_net)</p>
-                        <p class="text-xs text-slate-300 mt-1">Rec: BLOCK & VERIFY</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                    <!-- 2. Fraud Distribution -->
+                    <div class="glass-card p-5 img-container">
+                        <h3 class="text-lg font-semibold mb-4 text-slate-200 flex items-center gap-2">
+                            <i class="fas fa-adjust text-slate-400"></i> Class Imbalance
+                        </h3>
+                        <img src="/dashboard_data/eda_charts/01_fraud_ratio.png" alt="Fraud Ratio">
                     </div>
                     
-                    <div class="bg-slate-800 p-3 rounded border border-orange-500/50">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-xs font-bold text-orange-400">RISK: 75/100</span>
-                            <span class="text-xs text-slate-400">2 mins ago</span>
-                        </div>
-                        <p class="text-sm font-semibold">Txn: $310.50 (grocery_pos)</p>
-                        <p class="text-xs text-slate-300 mt-1">Rec: REQUIRE 2FA</p>
+                    <!-- 6. Category Analysis -->
+                    <div class="glass-card p-5 img-container">
+                        <h3 class="text-lg font-semibold mb-4 text-slate-200 flex items-center gap-2">
+                            <i class="fas fa-shopping-bag text-slate-400"></i> Merchant Vulnerability
+                        </h3>
+                        <img src="/dashboard_data/eda_charts/04_category_fraud_rate.png" alt="Category Risk">
                     </div>
                 </div>
+
+                <!-- 3. Amount Analysis -->
+                <div class="glass-card p-5 img-container">
+                    <h3 class="text-lg font-semibold mb-4 text-slate-200 flex items-center gap-2">
+                        <i class="fas fa-money-bill-wave text-slate-400"></i> Value Distribution
+                    </h3>
+                    <img src="/dashboard_data/eda_charts/02_amount_distribution.png" alt="Amount Distribution">
+                </div>
+
+                <!-- 4. Time-based Analysis -->
+                <div class="glass-card p-5 img-container">
+                    <h3 class="text-lg font-semibold mb-4 text-slate-200 flex items-center gap-2">
+                        <i class="fas fa-clock text-slate-400"></i> Temporal Attack Vectors
+                    </h3>
+                    <img src="/dashboard_data/eda_charts/03_hourly_fraud_rate.png" alt="Hourly Trend">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                    <!-- 5. Location-based Fraud -->
+                    <div class="glass-card p-5 img-container">
+                        <h3 class="text-lg font-semibold mb-4 text-slate-200 flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-slate-400"></i> Geographic Risk
+                        </h3>
+                        <img src="/dashboard_data/eda_charts/07_top_states_fraud.png" alt="Top States">
+                    </div>
+
+                    <!-- Gender & Boxplot -->
+                    <div class="glass-card p-5 img-container">
+                        <h3 class="text-lg font-semibold mb-4 text-slate-200 flex items-center gap-2">
+                            <i class="fas fa-users text-slate-400"></i> Demographics
+                        </h3>
+                        <img src="/dashboard_data/eda_charts/06_gender_fraud.png" alt="Gender" class="mb-4">
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Age & Gender -->
-            <div class="glass-card p-4 img-container">
-                <h3 class="text-sm font-semibold mb-3 border-b border-slate-700 pb-2">Fraud by Gender</h3>
-                <img src="/dashboard_data/eda_charts/06_gender_fraud.png" alt="Gender">
-            </div>
+            <!-- Right Column: Analyst Insights -->
+            <div class="space-y-6 lg:space-y-8">
+                
+                <!-- INSIGHTS PANEL (Data Analyst thinking) -->
+                <div class="glass-card p-6 bg-gradient-to-b from-sky-900/20 to-transparent border-t-4 border-t-sky-500">
+                    <h3 class="text-xl font-bold mb-6 text-white flex items-center gap-3">
+                        <div class="h-8 w-8 rounded-full bg-sky-500/20 flex items-center justify-center">
+                            <i class="fas fa-brain text-sky-400 text-sm"></i>
+                        </div>
+                        Executive Insights
+                    </h3>
+                    <div class="space-y-5">
+                        <div class="relative pl-6 border-l-2 border-slate-700">
+                            <div class="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-sky-500 shadow-[0_0_10px_#38bdf8]"></div>
+                            <h4 class="text-white font-semibold mb-1">Value Discrepancy</h4>
+                            <p class="text-sm text-slate-300 leading-relaxed">The average fraudulent transaction ($509) is nearly 8x higher than legitimate behavior ($67), identifying high-ticket amounts as the primary trigger.</p>
+                        </div>
+                        
+                        <div class="relative pl-6 border-l-2 border-slate-700">
+                            <div class="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-indigo-500 shadow-[0_0_10px_#818cf8]"></div>
+                            <h4 class="text-white font-semibold mb-1">Nocturnal Spikes</h4>
+                            <p class="text-sm text-slate-300 leading-relaxed">Threat actors predominantly strike around 23:00 local time, leveraging lowered user awareness during late-night hours.</p>
+                        </div>
 
-            <div class="glass-card p-4 img-container">
-                <h3 class="text-sm font-semibold mb-3 border-b border-slate-700 pb-2">Amount Boxplot</h3>
-                <img src="/dashboard_data/eda_charts/10_amount_boxplot.png" alt="Boxplot">
-            </div>
+                        <div class="relative pl-6 border-l-2 border-slate-700">
+                            <div class="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444]"></div>
+                            <h4 class="text-white font-semibold mb-1">Sector Vulnerabilities</h4>
+                            <p class="text-sm text-slate-300 leading-relaxed">Online shopping (shopping_net) and POS groceries are the most frequently exploited sectors.</p>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- LIVE ALERT PANEL -->
+                <div class="glass-card p-6 bg-gradient-to-b from-red-900/20 to-transparent border-t-4 border-t-red-500">
+                    <h3 class="text-xl font-bold mb-6 text-white flex items-center gap-3">
+                        <div class="h-8 w-8 rounded-full bg-red-500/20 flex items-center justify-center">
+                            <i class="fas fa-bell text-red-400 text-sm"></i>
+                        </div>
+                        Active Threats
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-slate-800/80 p-4 rounded-xl border border-red-500/30 hover:border-red-500/80 transition shadow-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-red-400 tracking-wider bg-red-500/10 px-2 py-1 rounded">CRITICAL 92/100</span>
+                                <span class="text-xs font-mono text-slate-400"><i class="fas fa-clock mr-1"></i>00:00:15</span>
+                            </div>
+                            <p class="text-white font-medium mb-1"><i class="fas fa-credit-card text-slate-500 mr-2"></i>$845.00 via shopping_net</p>
+                            <p class="text-xs text-red-300 font-bold tracking-wide mt-2">ACTION: AUTO-BLOCKED</p>
+                        </div>
+                        
+                        <div class="bg-slate-800/80 p-4 rounded-xl border border-orange-500/30 hover:border-orange-500/80 transition shadow-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-orange-400 tracking-wider bg-orange-500/10 px-2 py-1 rounded">WARN 75/100</span>
+                                <span class="text-xs font-mono text-slate-400"><i class="fas fa-clock mr-1"></i>00:04:32</span>
+                            </div>
+                            <p class="text-white font-medium mb-1"><i class="fas fa-credit-card text-slate-500 mr-2"></i>$310.50 via grocery_pos</p>
+                            <p class="text-xs text-orange-300 font-bold tracking-wide mt-2">ACTION: TRIGGERED 2FA</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 img-container">
+                    <h3 class="text-sm font-semibold mb-3 text-slate-200">Volume Spread</h3>
+                    <img src="/dashboard_data/eda_charts/10_amount_boxplot.png" alt="Boxplot">
+                </div>
+
+            </div>
         </div>
-
     </div>
 
 </body>
