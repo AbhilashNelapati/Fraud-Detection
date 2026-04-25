@@ -4,68 +4,250 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fraud Intelligence System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #e2e8f0; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        h1 { color: #38bdf8; text-align: center; }
-        .card { background-color: #1e293b; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #334155; border-radius: 4px; background-color: #0f172a; color: #e2e8f0; box-sizing: border-box; }
-        button { background-color: #2563eb; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; width: 100%; font-size: 16px; font-weight: bold; }
-        button:hover { background-color: #1d4ed8; }
-        .result { display: none; margin-top: 20px; padding: 15px; border-radius: 5px; }
-        .result.high-risk { background-color: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; }
-        .result.low-risk { background-color: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; }
-        .result p { margin: 5px 0; }
-        .result span { font-weight: bold; }
-        .links { text-align: center; margin-top: 20px; }
-        .links a { color: #38bdf8; text-decoration: none; font-size: 18px; }
-        .links a:hover { text-decoration: underline; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #030712; /* Very dark blue/black */
+            color: #f3f4f6;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Abstract glowing background blobs */
+        .blob-1 {
+            position: fixed; top: -100px; left: -100px; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1; pointer-events: none;
+        }
+        .blob-2 {
+            position: fixed; bottom: -150px; right: -100px; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1; pointer-events: none;
+        }
+
+        /* Glassmorphism containers */
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Input styling */
+        .premium-input {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        .premium-input:focus {
+            outline: none;
+            border-color: rgba(56, 189, 248, 0.8);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            background: rgba(15, 23, 42, 1);
+        }
+
+        /* Button styling */
+        .btn-glow {
+            background: linear-gradient(135deg, #0284c7 0%, #3b82f6 100%);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-glow::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.5s ease;
+        }
+        .btn-glow:hover::before { left: 100%; }
+        .btn-glow:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes scanLine {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .scanning-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .scanning-effect::after {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; width: 100%; height: 2px;
+            background: #38bdf8;
+            box-shadow: 0 0 10px #38bdf8, 0 0 20px #38bdf8;
+            animation: scanLine 2s linear infinite;
+            display: none;
+        }
+        .is-scanning::after { display: block; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Fraud Analytics & AI Intelligence</h1>
-        
-        <div class="card">
-            <h2>Transaction Simulator</h2>
-            <form id="predict-form">
-                <div class="form-group">
-                    <label>Transaction Amount ($)</label>
-                    <input type="number" id="amt" value="250" required>
-                </div>
-                <div class="form-group">
-                    <label>Merchant Category</label>
-                    <select id="category">
-                        <option value="grocery_pos">Grocery POS</option>
-                        <option value="shopping_net">Shopping Net</option>
-                        <option value="misc_net">Misc Net</option>
-                        <option value="gas_transport">Gas Transport</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Hour of Day (0-23)</label>
-                    <input type="number" id="hour" value="23" min="0" max="23" required>
-                </div>
-                <div class="form-group">
-                    <label>Distance from Home (km)</label>
-                    <input type="number" id="distance_km" value="120" required>
-                </div>
-                <button type="submit">Analyze Transaction</button>
-            </form>
+<body class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="blob-1"></div>
+    <div class="blob-2"></div>
+
+    <div class="max-w-5xl w-full space-y-8 z-10 relative">
+        <!-- Header -->
+        <div class="text-center">
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-3 bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-400">
+                Fraud Intelligence Node
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl font-light">AI-Powered Transaction Risk Assessment</p>
         </div>
 
-        <div id="result-card" class="card result">
-            <h2 id="res-prediction">Evaluating...</h2>
-            <p>Risk Score: <span id="res-score"></span> (<span id="res-level"></span>)</p>
-            <p>Insight: <span id="res-insight"></span></p>
-            <p>AI Explanation: <span id="res-explanation"></span></p>
-            <p>Action Recommendation: <span id="res-recommendation"></span></p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10">
+            <!-- Left Column: Input Form -->
+            <div class="glass-panel p-8">
+                <div class="flex items-center mb-6 border-b border-slate-700/50 pb-4">
+                    <div class="h-8 w-8 rounded bg-sky-500/20 flex items-center justify-center mr-3">
+                        <i class="fas fa-microchip text-sky-400"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-slate-200">Transaction Simulator</h2>
+                </div>
+
+                <form id="predict-form" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Transaction Amount ($)</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-dollar-sign text-slate-500"></i>
+                            </div>
+                            <input type="number" id="amt" value="1250" required 
+                                class="premium-input w-full pl-10 pr-4 py-3 rounded-lg text-lg font-medium tracking-wide">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Merchant Category</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-store text-slate-500"></i>
+                            </div>
+                            <select id="category" class="premium-input w-full pl-10 pr-4 py-3 rounded-lg text-lg appearance-none cursor-pointer">
+                                <option value="shopping_net">Shopping Net (High Risk)</option>
+                                <option value="grocery_pos">Grocery POS</option>
+                                <option value="misc_net">Misc Net</option>
+                                <option value="gas_transport">Gas Transport</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <i class="fas fa-chevron-down text-slate-500"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Hour (0-23)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="far fa-clock text-slate-500"></i>
+                                </div>
+                                <input type="number" id="hour" value="23" min="0" max="23" required
+                                    class="premium-input w-full pl-10 pr-4 py-3 rounded-lg text-lg">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Distance (km)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-map-marker-alt text-slate-500"></i>
+                                </div>
+                                <input type="number" id="distance_km" value="150" required
+                                    class="premium-input w-full pl-10 pr-4 py-3 rounded-lg text-lg">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="btn-glow w-full mt-6 py-4 rounded-lg text-white font-bold text-lg tracking-wider uppercase flex justify-center items-center gap-2">
+                        <span>Analyze Transaction</span>
+                        <i class="fas fa-bolt"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Column: Results -->
+            <div class="glass-panel p-8 flex flex-col justify-between" id="result-container">
+                
+                <div id="initial-state" class="flex flex-col items-center justify-center h-full text-slate-500 space-y-4">
+                    <i class="fas fa-shield-virus text-6xl opacity-50"></i>
+                    <p class="text-lg">Awaiting transaction data...</p>
+                </div>
+
+                <div id="result-card" class="hidden h-full flex flex-col">
+                    <div class="flex items-center mb-6 border-b border-slate-700/50 pb-4 justify-between">
+                        <div class="flex items-center">
+                            <div class="h-8 w-8 rounded bg-indigo-500/20 flex items-center justify-center mr-3">
+                                <i class="fas fa-network-wired text-indigo-400"></i>
+                            </div>
+                            <h2 class="text-xl font-semibold text-slate-200">AI Assessment</h2>
+                        </div>
+                        <div id="status-badge" class="px-4 py-1.5 rounded-full text-sm font-bold tracking-widest uppercase transition-all duration-500">
+                            SAFE
+                        </div>
+                    </div>
+
+                    <div class="flex-grow space-y-6">
+                        <!-- Risk Score Gauge -->
+                        <div>
+                            <div class="flex justify-between text-sm font-medium mb-2">
+                                <span class="text-slate-400">Fraud Risk Score</span>
+                                <span id="res-score-text" class="text-white text-lg">0/100</span>
+                            </div>
+                            <div class="h-3 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div id="res-score-bar" class="h-full rounded-full transition-all duration-1000 w-0 bg-green-500"></div>
+                            </div>
+                            <p class="text-xs text-right mt-1 text-slate-400">Risk Level: <span id="res-level" class="font-bold text-white">Low</span></p>
+                        </div>
+
+                        <!-- Insight -->
+                        <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+                            <h4 class="text-xs font-bold tracking-widest text-slate-400 uppercase mb-2"><i class="fas fa-brain mr-2"></i>Primary Insight</h4>
+                            <p id="res-insight" class="text-slate-200 text-sm leading-relaxed">...</p>
+                        </div>
+
+                        <!-- Explanation -->
+                        <div class="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+                            <h4 class="text-xs font-bold tracking-widest text-slate-400 uppercase mb-2"><i class="fas fa-code-branch mr-2"></i>Model Explanation</h4>
+                            <p id="res-explanation" class="text-slate-200 text-sm leading-relaxed font-mono">...</p>
+                        </div>
+                        
+                        <!-- Recommendation -->
+                        <div id="rec-box" class="rounded-lg p-4 border flex items-start gap-3 transition-colors duration-500">
+                            <i id="rec-icon" class="fas fa-check-circle mt-0.5 text-lg transition-colors duration-500"></i>
+                            <div>
+                                <h4 class="text-xs font-bold tracking-widest uppercase mb-1">Recommended Action</h4>
+                                <p id="res-recommendation" class="text-sm font-semibold">...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="links">
-            <a href="/dashboard">📊 View Full Analytics Dashboard</a>
+        <!-- Links -->
+        <div class="text-center pt-8">
+            <a href="/dashboard" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-all shadow-lg hover:shadow-sky-500/20">
+                <i class="fas fa-chart-line text-sky-400"></i>
+                <span class="font-medium tracking-wide">View Full Analytics Dashboard</span>
+                <i class="fas fa-arrow-right text-sm ml-1 opacity-70"></i>
+            </a>
         </div>
     </div>
 
@@ -73,6 +255,16 @@
         document.getElementById('predict-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const btn = document.getElementById('submit-btn');
+            const resultPanel = document.getElementById('result-container');
+            const initial = document.getElementById('initial-state');
+            const resultCard = document.getElementById('result-card');
+            
+            // Loading state
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Analyzing...</span>';
+            btn.disabled = true;
+            resultPanel.classList.add('is-scanning');
+
             const hour = parseInt(document.getElementById('hour').value);
             const isNight = (hour >= 22 || hour <= 4) ? 1 : 0;
             
@@ -84,32 +276,70 @@
                 distance_km: parseFloat(document.getElementById('distance_km').value)
             };
 
-            const response = await fetch('/api/predict', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+            try {
+                // Simulate slight network delay for dramatic effect
+                await new Promise(r => setTimeout(r, 800));
 
-            const result = await response.json();
-            
-            const resultCard = document.getElementById('result-card');
-            resultCard.style.display = 'block';
-            
-            if (result.prediction === "Fraud") {
-                resultCard.className = 'card result high-risk';
-                document.getElementById('res-prediction').innerText = '🚨 FRAUD DETECTED';
-                document.getElementById('res-prediction').style.color = '#ef4444';
-            } else {
-                resultCard.className = 'card result low-risk';
-                document.getElementById('res-prediction').innerText = '✅ LEGITIMATE';
-                document.getElementById('res-prediction').style.color = '#22c55e';
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                // Switch views
+                initial.classList.add('hidden');
+                resultCard.classList.remove('hidden');
+                
+                // Update elements
+                const statusBadge = document.getElementById('status-badge');
+                const scoreBar = document.getElementById('res-score-bar');
+                const recBox = document.getElementById('rec-box');
+                const recIcon = document.getElementById('rec-icon');
+
+                document.getElementById('res-score-text').innerText = result.risk_score + '/100';
+                document.getElementById('res-level').innerText = result.risk_level;
+                document.getElementById('res-insight').innerText = result.insight;
+                document.getElementById('res-explanation').innerText = result.explanation;
+                document.getElementById('res-recommendation').innerText = result.recommendation;
+                
+                // Animate bar width
+                setTimeout(() => {
+                    scoreBar.style.width = result.risk_score + '%';
+                }, 100);
+
+                // Styling based on risk
+                if (result.prediction === "Fraud") {
+                    statusBadge.innerText = 'FRAUD DETECTED';
+                    statusBadge.className = 'px-4 py-1.5 rounded-full text-sm font-bold tracking-widest uppercase bg-red-500/20 text-red-400 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse';
+                    
+                    scoreBar.className = 'h-full rounded-full transition-all duration-1000 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]';
+                    
+                    recBox.className = 'rounded-lg p-4 border flex items-start gap-3 bg-red-500/10 border-red-500/30 text-red-400';
+                    recIcon.className = 'fas fa-shield-alt mt-0.5 text-lg text-red-500';
+                } else {
+                    statusBadge.innerText = 'LEGITIMATE';
+                    statusBadge.className = 'px-4 py-1.5 rounded-full text-sm font-bold tracking-widest uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.2)]';
+                    
+                    let color = result.risk_score > 30 ? 'bg-amber-500' : 'bg-emerald-500';
+                    let shadow = result.risk_score > 30 ? 'rgba(245,158,11,0.8)' : 'rgba(16,185,129,0.8)';
+                    scoreBar.className = `h-full rounded-full transition-all duration-1000 ${color} shadow-[0_0_10px_${shadow}]`;
+                    
+                    let boxColor = result.risk_score > 30 ? 'amber' : 'emerald';
+                    recBox.className = `rounded-lg p-4 border flex items-start gap-3 bg-${boxColor}-500/10 border-${boxColor}-500/30 text-${boxColor}-400`;
+                    recIcon.className = `fas fa-check-circle mt-0.5 text-lg text-${boxColor}-500`;
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Error connecting to AI engine.");
+            } finally {
+                // Reset button
+                btn.innerHTML = '<span>Analyze Transaction</span><i class="fas fa-bolt"></i>';
+                btn.disabled = false;
+                resultPanel.classList.remove('is-scanning');
             }
-
-            document.getElementById('res-score').innerText = result.risk_score + '/100';
-            document.getElementById('res-level').innerText = result.risk_level;
-            document.getElementById('res-insight').innerText = result.insight;
-            document.getElementById('res-explanation').innerText = result.explanation;
-            document.getElementById('res-recommendation').innerText = result.recommendation;
         });
     </script>
 </body>
